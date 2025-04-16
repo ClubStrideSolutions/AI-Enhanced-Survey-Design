@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Session 3: AI-Enhanced Survey Design Workshop</title>
+  <meta name="description" content="Phase 1, Session 3: AI-Enhanced Survey Design Workshop & Tool Development" />
+
+  <style>
+    :root {
+      --primary-color: #4c6ef5;
+      --secondary-color: #40c057;
+      --accent-color: #fd7e14;
+      --dark-color: #343a40;
+      --light-color: #f8f9fa;
+      --text-color: #212529;
+      --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: #f1f3f5;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5px;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary-color), #228be6);
+      color: #fff;
+      padding: 2.5rem;
+      text-align: center;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+    
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    
+    header h2 {
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+    
+    header p {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+    
+    .date-box {
+      display: inline-block;
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+    
+    /* Intro section (no embedded video) */
+    .intro-section {
+      background-color: #fff;
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .intro-message {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 1.5rem auto;
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+
+    /* Single QR code section */
+    .qr-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--light-color);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .qr-section p {
+      margin-bottom: 1rem;
+      color: #495057;
+    }
+
+    /* Activities Section with drop-downs */
+    .activities-section {
+      background-color: #fff;
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background-color: var(--primary-color);
+    }
+
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .activity-card {
+      background-color: var(--light-color);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .activity-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .activity-card h4 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .activity-card h4 .time {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 20px;
+      background-color: var(--accent-color);
+      color: #fff;
+      font-weight: normal;
+    }
+
+    .activity-card ul {
+      padding-left: 1.2rem;
+      margin-top: 0.5rem;
+    }
+
+    .activity-card li {
+      margin-bottom: 0.5rem;
+      color: #495057;
+      font-size: 0.95rem;
+    }
+
+    .expand-icon {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      background-color: var(--primary-color);
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      transition: transform 0.3s ease;
+    }
+
+    .detailed-content {
+      display: none;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      border-top: 3px solid var(--primary-color);
+    }
+
+    .detailed-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Boxes for Key Terms, Discussion, Activities, Reflection */
+    .definition-box {
+      background-color: #e7f5ff;
+      border-left: 4px solid #4dabf7;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .discussion-box {
+      background-color: #fff9db;
+      border-left: 4px solid #fcc419;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .activity-box {
+      background-color: #f3f0ff;
+      border-left: 4px solid #7950f2;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .feedback-box {
+      background-color: #ebfbee;
+      border-left: 4px solid #40c057;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      background-color: var(--dark-color);
+      color: #fff;
+      border-radius: 15px;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .activity-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>Session 3</h1>
+      <h2>AI-Enhanced Survey Design Workshop &amp; Tool Development</h2>
+      <p>Phase 1: Training, Research Foundations &amp; Tool Development</p>
+      <div class="date-box">Tuesday, April 15, 2025 | 2 hours</div>
+    </header>
+    
+    <!-- Introduction (no embedded video) -->
+    <section class="intro-section">
+      <div class="intro-message">
+        <p>
+          In Session 3, you’ll learn advanced survey design techniques, including question 
+          sequencing, logic, and branching. We’ll also discuss how AI tools (e.g., Google Forms 
+          AI-assisted question generation) can streamline the process, explore QR code creation, 
+          and plan for distributing your surveys. By the end, you’ll be ready to produce 
+          an AI-enhanced survey for your community research needs.
+        </p>
+      </div>
+    </section>
+
+    <!-- Single QR Code Section -->
+    <section class="qr-section">
+      <div>
+        <p><strong>Scan this QR code for references or quick tools:</strong></p>
+        <img 
+          src="Knowledge_Check.png" 
+          alt="QR Code Placeholder" 
+          style="width: 150px; height: 150px;"
+        >
+      </div>
+    </section>
+
+    <!-- Activities Section -->
+    <section class="activities-section">
+      <h2 class="section-title">Session Activities</h2>
+      <p style="text-align: center; margin-bottom: 20px; color: #495057;">
+        Click on an activity to see details (Key Terms, Discussion Points, Activity, Reflection).
+      </p>
+      
+      <div class="activity-grid">
+        <!-- Activity 1: Advanced Survey Structure -->
+        <div class="activity-card" onclick="toggleSection('activity-structure')" aria-expanded="false">
+          <h4>Advanced Survey Structure 
+            <span class="time">25 mins</span>
+          </h4>
+          <ul>
+            <li>Sequencing &amp; branching logic</li>
+            <li>Minimizing respondent fatigue</li>
+          </ul>
+          <div class="expand-icon">+</div>
+          
+          <div id="activity-structure" class="detailed-content">
+            <!-- Key Terms -->
+            <div class="definition-box">
+              <h4>Key Terms</h4>
+              <p><strong>Sequencing:</strong> Ordering questions logically to guide respondents.</p>
+              <p><strong>Branching Logic:</strong> Displaying different questions based on previous answers.</p>
+              <p><strong>Respondent Fatigue:</strong> When participants lose interest due to overly long or repetitive surveys.</p>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="discussion-box">
+              <h4>Discussion Points</h4>
+              <ul>
+                <li>Why does question sequence matter for data quality?</li>
+                <li>How might branching logic improve participant engagement?</li>
+                <li>What are early signs of respondent fatigue, and how can we prevent it?</li>
+              </ul>
+            </div>
+
+            <!-- Activity -->
+            <div class="activity-box">
+              <h4>Activity</h4>
+              <p>Sketch a small branching flow diagram for a hypothetical survey topic. Show how participants might skip or dive deeper into sections based on their answers.</p>
+            </div>
+
+            <!-- Reflection Questions -->
+            <div class="feedback-box">
+              <h4>Reflection Questions</h4>
+              <ul>
+                <li>What potential issues arise if branching logic isn’t set up correctly?</li>
+                <li>How can you test your survey flow before launching it?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity 2: AI Tools for Survey Design -->
+        <div class="activity-card" onclick="toggleSection('activity-ai-tools')" aria-expanded="false">
+          <h4>AI Tools for Survey Design 
+            <span class="time">25 mins</span>
+          </h4>
+          <ul>
+            <li>Demonstration of AI-assisted question generation</li>
+            <li>Evaluating clarity &amp; bias</li>
+          </ul>
+          <div class="expand-icon">+</div>
+
+          <div id="activity-ai-tools" class="detailed-content">
+            <!-- Key Terms -->
+            <div class="definition-box">
+              <h4>Key Terms</h4>
+              <p><strong>AI Question Generation:</strong> Automated suggestions for question wording or structure.</p>
+              <p><strong>Template Adaptation:</strong> Using existing question sets to speed up survey creation.</p>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="discussion-box">
+              <h4>Discussion Points</h4>
+              <ul>
+                <li>Which parts of the survey process benefit most from AI suggestions?</li>
+                <li>What limitations or potential biases might AI introduce?</li>
+              </ul>
+            </div>
+
+            <!-- Activity -->
+            <div class="activity-box">
+              <h4>Activity</h4>
+              <p>Use an AI extension or plugin with Google Forms (or a similar platform) to generate at least two new survey questions. Edit them to ensure neutrality, clarity, and alignment with your research goals.</p>
+            </div>
+
+            <!-- Reflection Questions -->
+            <div class="feedback-box">
+              <h4>Reflection Questions</h4>
+              <ul>
+                <li>How did AI-generated questions differ from what you’d write on your own?</li>
+                <li>Why is human oversight still crucial when using AI for question design?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity 3: QR Code Creation & Distribution -->
+        <div class="activity-card" onclick="toggleSection('activity-qr-code')" aria-expanded="false">
+          <h4>QR Code Creation &amp; Distribution 
+            <span class="time">20 mins</span>
+          </h4>
+          <ul>
+            <li>Generating QR codes for survey access</li>
+            <li>Digital vs. printed distribution strategies</li>
+          </ul>
+          <div class="expand-icon">+</div>
+
+          <div id="activity-qr-code" class="detailed-content">
+            <!-- Key Terms -->
+            <div class="definition-box">
+              <h4>Key Terms</h4>
+              <p><strong>QR Code:</strong> Quick Response code that links to online forms or websites.</p>
+              <p><strong>Engagement Rate:</strong> How many people scan/visit your survey compared to how many see the code.</p>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="discussion-box">
+              <h4>Discussion Points</h4>
+              <ul>
+                <li>Why might QR codes be appealing to certain audiences?</li>
+                <li>In which locations or platforms are QR codes most effective?</li>
+              </ul>
+            </div>
+
+            <!-- Activity -->
+            <div class="activity-box">
+              <h4>Activity</h4>
+              <p>Generate a QR code for a mock or real survey link. Brainstorm potential places to display or share it (e.g., flyers, social media, local businesses), and how you’ll track responses.</p>
+            </div>
+
+            <!-- Reflection Questions -->
+            <div class="feedback-box">
+              <h4>Reflection Questions</h4>
+              <ul>
+                <li>Which distribution methods might resonate most with your community?</li>
+                <li>What other ways could you quickly share your survey link?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity 4: Group Breakouts for Survey Drafting -->
+        <!-- <div class="activity-card" onclick="toggleSection('activity-group-breakouts')" aria-expanded="false">
+          <h4>Group Breakouts: Thematic Survey Drafting 
+            <span class="time">25 mins</span>
+          </h4>
+          <ul>
+            <li>Team-based survey design</li>
+            <li>Building on AI- and logic-driven approaches</li>
+          </ul>
+          <div class="expand-icon">+</div> -->
+
+          <!-- <div id="activity-group-breakouts" class="detailed-content"> -->
+            <!-- Key Terms -->
+            <!-- <div class="definition-box">
+              <h4>Key Terms</h4>
+              <p><strong>Thematic Focus:</strong> Creating survey content around specific community issues (e.g., public health, education).</p>
+              <p><strong>Logic-Driven Approach:</strong> Structuring survey flows that adapt to participant responses.</p>
+            </div> -->
+
+            <!-- Discussion Points -->
+            <!-- <div class="discussion-box">
+              <h4>Discussion Points</h4>
+              <ul>
+                <li>Which question formats best capture the data you need?</li>
+                <li>How might advanced logic or AI suggestions refine your approach?</li>
+              </ul>
+            </div> -->
+
+            <!-- Activity -->
+            <!-- <div class="activity-box">
+              <h4>Activity</h4>
+              <p>Form teams by research topic. Draft a short survey using both standard and AI-generated questions, integrating at least one logic branch. Aim for clarity, neutrality, and effective question flow.</p>
+            </div> -->
+
+            <!-- Reflection Questions -->
+            <!-- <div class="feedback-box">
+              <h4>Reflection Questions</h4>
+              <ul>
+                <li>Which features or question types did you find most useful?</li>
+                <li>How might your final survey differ from your initial draft after group input?</li>
+              </ul>
+            </div> -->
+          <!-- </div> -->
+        <!-- </div> -->
+      </div>
+    </section>
+
+    <!-- Assignment -->
+    <section class="activities-section">
+      <h2 class="section-title">Assignment</h2>
+      <p style="text-align: center; margin-bottom: 20px; color: #495057;">
+      </p>
+      <div class="activity-grid">
+        <div class="activity-card" style="cursor:auto;">
+          <h4>Draft Three AI-Enhanced Survey Questions <span class="time">In-Class Activity</span></h4>
+          <ul>
+            <li>Use an AI tool for question generation</li>
+            <li>Provide a brief rationale for each question</li>
+            <li>Check for clarity, neutrality, and ethics</li>
+          </ul>
+          <!-- Details open by default here -->
+          <div class="expand-icon" style="pointer-events: none;">&nbsp;</div>
+          <div class="detailed-content" style="display: block;">
+            <p>
+              <strong>Instructions:</strong> Propose three original survey questions relevant 
+              to your community needs assessment. Each question should be run through an AI 
+              assistant (or tool) for generation or refinement. For each, include a sentence 
+              explaining why it’s important and how it aligns with best practices on ethics 
+              and bias. Submit your draft by the next session for feedback.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>© 2025 Needs Assessment &amp; YPAR Curriculum with AI Integration</p>
+      <p>Questions? Contact: javier@clubstride.org | (707) 204-3160</p>
+    </footer>
+  </div>
+
+  <!-- JavaScript for toggling activity details -->
+  <script>
+    function toggleSection(sectionId) {
+      const contentElement = document.getElementById(sectionId);
+      if (!contentElement) return;
+      contentElement.classList.toggle('active');
+      
+      const parentCard = contentElement.closest('.activity-card');
+      if (parentCard) {
+        const isActive = contentElement.classList.contains('active');
+        parentCard.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+        
+        // Update the expand icon text
+        const expandIcon = parentCard.querySelector('.expand-icon');
+        if (expandIcon) {
+          expandIcon.textContent = isActive ? '-' : '+';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
